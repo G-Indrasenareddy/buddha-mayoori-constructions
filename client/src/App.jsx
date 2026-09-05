@@ -1,14 +1,32 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { RootLayout } from './layouts/RootLayout';
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { ServicesPage } from './pages/ServicesPage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { ProjectDetailPage } from './pages/ProjectDetailPage';
+import { TeamPage } from './pages/TeamPage';
+import { ContactPage } from './pages/ContactPage';
+import { QuotePage } from './pages/QuotePage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-900 p-4">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">BUDDHA MAYOORI CONSTRUCTIONS</h1>
-        <p className="mt-2 text-sm text-gray-600">Project Foundation Initialized - Ready for Phase 01</p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RootLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="services" element={<ServicesPage />} />
+          <Route path="projects" element={<ProjectsPage />} />
+          <Route path="projects/:projectId" element={<ProjectDetailPage />} />
+          <Route path="team" element={<TeamPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="request-a-quote" element={<QuotePage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
