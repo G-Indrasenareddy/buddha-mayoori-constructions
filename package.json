@@ -1,0 +1,20 @@
+{
+  "name": "buddha-mayoori-constructions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production-quality full-stack application for Buddha Mayoori Constructions",
+  "scripts": {
+    "dev:client": "npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "install:all": "npm install --prefix client && npm install --prefix server"
+  },
+  "keywords": [
+    "construction",
+    "fullstack",
+    "react",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC"
+}
