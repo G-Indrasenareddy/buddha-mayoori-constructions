@@ -41,27 +41,27 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* Main Desktop & Mobile Header Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-          {/* Logo and Brand Title */}
-          <Link to="/" className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded">
+        {/* Main Header Bar with Prominent Logo Display */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex justify-between items-center">
+          {/* Prominently Sized Official Logo and Brand Title */}
+          <Link to="/" className="flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded">
             <img
               src={logoImg}
               alt="Buddha Mayoori Constructions Official Logo"
-              className="h-10 w-10 sm:h-12 sm:w-12 object-contain rounded border border-slate-200 bg-white"
+              className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16 object-contain rounded-md border border-slate-200 bg-white shadow-2xs group-hover:border-amber-400 transition-all duration-200 shrink-0"
             />
-            <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-amber-700 transition-colors leading-tight">
+            <div className="flex flex-col justify-center">
+              <span className="text-base sm:text-xl font-extrabold text-slate-900 group-hover:text-amber-700 transition-colors leading-tight tracking-tight">
                 {COMPANY_INFO.name}
               </span>
-              <span className="text-[11px] text-slate-500 font-medium">
+              <span className="text-[11px] sm:text-xs text-slate-500 font-semibold tracking-wide mt-0.5">
                 {COMPANY_INFO.establishedLabel} • Koodal, Pathanamthitta
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav aria-label="Main Desktop Navigation" className="hidden lg:flex items-center gap-7 text-sm font-semibold">
+          <nav aria-label="Main Desktop Navigation" className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-semibold">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -81,7 +81,7 @@ export const Navbar = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/request-a-quote"
-              className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-xs sm:text-sm font-semibold rounded-md bg-amber-600 text-slate-900 hover:bg-amber-500 active:bg-amber-700 transition-colors shadow-xs min-h-[44px]"
+              className="hidden sm:inline-flex items-center justify-center px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-md bg-amber-600 text-slate-900 hover:bg-amber-500 active:bg-amber-700 transition-colors shadow-xs min-h-[44px]"
             >
               Request a Building Estimate
             </Link>

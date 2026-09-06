@@ -39,13 +39,13 @@ export const MobileDrawer = ({ isOpen, onClose, navLinks }) => {
         <div className="p-5">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               <img
                 src={logoImg}
-                alt="Logo"
-                className="h-9 w-9 object-contain rounded border border-slate-200"
+                alt="Buddha Mayoori Constructions Logo"
+                className="h-11 w-11 object-contain rounded-md border border-slate-200 shrink-0"
               />
-              <span className="font-bold text-slate-900 text-sm">{COMPANY_INFO.name}</span>
+              <span className="font-bold text-slate-900 text-sm leading-tight">{COMPANY_INFO.name}</span>
             </div>
             <button
               type="button"
