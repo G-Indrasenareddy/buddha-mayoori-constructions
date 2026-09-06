@@ -41,17 +41,17 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* Main Header Bar with Prominent Logo Display */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex justify-between items-center">
-          {/* Prominently Sized Official Logo and Brand Title */}
-          <Link to="/" className="flex items-center gap-3.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded">
+        {/* Main Header Bar with Prominent 76px Brand Mark Display */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2 flex justify-between items-center">
+          {/* Prominently Sized Official Logo Brand Mark (76px Desktop / 64px Tablet / 48px Mobile) */}
+          <Link to="/" className="flex items-center gap-3.5 sm:gap-4 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg">
             <img
               src={logoImg}
               alt="Buddha Mayoori Constructions Official Logo"
-              className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16 object-contain rounded-md border border-slate-200 bg-white shadow-2xs group-hover:border-amber-400 transition-all duration-200 shrink-0"
+              className="h-12 w-12 sm:h-16 sm:w-16 lg:h-[76px] lg:w-[76px] object-contain rounded-lg border border-slate-200 bg-white shadow-xs group-hover:border-amber-400 transition-all duration-200 shrink-0"
             />
             <div className="flex flex-col justify-center">
-              <span className="text-base sm:text-xl font-extrabold text-slate-900 group-hover:text-amber-700 transition-colors leading-tight tracking-tight">
+              <span className="text-base sm:text-xl lg:text-2xl font-extrabold text-slate-900 group-hover:text-amber-700 transition-colors leading-tight tracking-tight">
                 {COMPANY_INFO.name}
               </span>
               <span className="text-[11px] sm:text-xs text-slate-500 font-semibold tracking-wide mt-0.5">
