@@ -1,42 +1,170 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { PageMeta } from '../components/common/PageMeta';
 import { Container } from '../components/ui/Container';
 import { Section } from '../components/ui/Section';
 import { SectionHeading } from '../components/ui/SectionHeading';
+import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { COMPANY_INFO, BUSINESS_CLAIMS } from '../utils/constants';
+import { StatCard } from '../components/common/StatCard';
+import { ServiceCard } from '../components/common/ServiceCard';
+import { TeamCard } from '../components/common/TeamCard';
+import { COMPANY_INFO, BUSINESS_CLAIMS, CANONICAL_SERVICES, TEAM_ROSTER, CONTACT_INFO } from '../utils/constants';
 
 export const HomePage = () => {
   return (
     <>
       <PageMeta
         title="Home"
-        description="Buddha Mayoori Constructions — Established Since 1990 in Koodal, Pathanamthitta, Kerala."
+        description="Buddha Mayoori Constructions — Civil construction and structural designing services in Koodal, Pathanamthitta, Kerala since 1990."
       />
-      <Section background="white" padding="large">
+
+      {/* Hero Section */}
+      <Section background="dark" padding="large" className="relative overflow-hidden border-b border-slate-800">
+        <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-900 to-slate-950 opacity-90" />
+        <Container className="relative z-10">
+          <div className="max-w-3xl">
+            <div className="mb-4">
+              <Badge variant="amber">{COMPANY_INFO.establishedLabel}</Badge>
+            </div>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+              {COMPANY_INFO.name}
+            </h1>
+            <p className="mt-4 text-lg sm:text-xl text-slate-300 font-medium">
+              Delivering civil construction, structural designing, and building estimation services across Kerala.
+            </p>
+            <p className="mt-2 text-sm text-amber-400 font-semibold">
+              📍 Primary Location: {COMPANY_INFO.primaryLocation}
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link to="/request-a-quote">
+                <Button variant="primary" size="lg">
+                  Request a Building Estimate
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="secondary" size="lg" className="border-slate-400 text-white hover:bg-slate-800 hover:text-white">
+                  Contact Us
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Business Experience / Statistics Section */}
+      <Section background="white" padding="default">
         <Container>
           <SectionHeading
-            badgeText="Phase 03 — Foundation Verified"
-            title={COMPANY_INFO.name}
-            subtitle={`Established ${COMPANY_INFO.establishedLabel} | Primary Location: ${COMPANY_INFO.primaryLocation}`}
+            badgeText="Business-Provided Claims"
+            title="Experience & Operational Claims"
+            subtitle="Business-provided working experience and workforce statistics."
+            centered
           />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {BUSINESS_CLAIMS.map((claim) => (
-              <Card key={claim.id} hoverEffect className="text-center">
-                <Badge variant="amber" className="mb-2">{claim.type}</Badge>
-                <h3 className="text-2xl font-bold text-slate-900 mt-2">{claim.label}</h3>
-                <p className="text-xs text-slate-500 mt-1">Status: {claim.status}</p>
-              </Card>
+              <StatCard key={claim.id} {...claim} />
             ))}
           </div>
+        </Container>
+      </Section>
 
-          <Card className="bg-slate-100 border-slate-300">
-            <p className="text-sm text-slate-700">
-              <strong>Phase 03 Route Architecture Active:</strong> Frontend foundation setup complete. Full homepage layout, hero section, and interactive service grids belong to Phase 04.
+      {/* Canonical 9 Services Section */}
+      <Section background="default" padding="default">
+        <Container>
+          <SectionHeading
+            badgeText="Canonical Services"
+            title="Our Services"
+            subtitle="The official canonical services provided by Buddha Mayoori Constructions."
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {CANONICAL_SERVICES.map((service, index) => (
+              <ServiceCard key={service.id} service={service} index={index} />
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link to="/services">
+              <Button variant="dark" size="md">
+                View All Canonical Services →
+              </Button>
+            </Link>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Leadership & Team Preview */}
+      <Section background="white" padding="default">
+        <Container>
+          <SectionHeading
+            badgeText="Leadership & Team"
+            title="Key Personnel Preview"
+            subtitle="Business-provided team roster entries."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TEAM_ROSTER.slice(0, 4).map((member) => (
+              <TeamCard key={member.id} member={member} />
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link to="/team">
+              <Button variant="ghost" size="md" className="text-amber-800 hover:bg-amber-50">
+                View Full 10-Entry Team Roster →
+              </Button>
+            </Link>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Major Branch & Working Sites Section */}
+      <Section background="subtle" padding="default">
+        <Container>
+          <SectionHeading
+            badgeText="Locations"
+            title="Major Branch & Working Sites"
+            subtitle="Business-provided locations. Branch/working-site classification requires business confirmation."
+          />
+          <Card className="bg-white">
+            <div className="flex flex-wrap gap-3">
+              {CONTACT_INFO.location.sites.map((site, idx) => (
+                <span
+                  key={idx}
+                  className="px-4 py-2 rounded-md bg-slate-100 border border-slate-200 text-slate-800 font-semibold text-sm"
+                >
+                  📍 {site}
+                </span>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-slate-500 italic">
+              Note: Classification of specific physical branch offices vs active site locations requires business confirmation.
             </p>
           </Card>
+        </Container>
+      </Section>
+
+      {/* Building Estimate Request CTA Banner */}
+      <Section background="dark" padding="default">
+        <Container className="text-center max-w-3xl">
+          <Badge variant="amber" className="mb-3">Start Your Project</Badge>
+          <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4">
+            Ready to Request a Building Estimate?
+          </h2>
+          <p className="text-slate-300 text-base mb-8">
+            Contact Buddha Mayoori Constructions today or complete our online Building Estimate Request Form.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/request-a-quote">
+              <Button variant="primary" size="lg">
+                Request a Building Estimate
+              </Button>
+            </Link>
+            <a href={`tel:${CONTACT_INFO.phones[0].raw}`}>
+              <Button variant="secondary" size="lg" className="border-slate-400 text-white hover:bg-slate-800">
+                Call {CONTACT_INFO.phones[0].display}
+              </Button>
+            </a>
+          </div>
         </Container>
       </Section>
     </>

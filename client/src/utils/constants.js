@@ -1,9 +1,9 @@
-// Buddha Mayoori Constructions — Business-Provided Constants & Data Structures
+// Buddha Mayoori Constructions — Single Source of Truth Constants
 
 export const COMPANY_INFO = {
   name: "Buddha Mayoori Constructions",
   established: 1990,
-  establishedLabel: "Since 1990",
+  establishedLabel: "Established Since 1990",
   primaryLocation: "Koodal, Pathanamthitta, Kerala",
   tagline: "Building Excellence Since 1990",
 };
@@ -46,17 +46,17 @@ export const CONTACT_INFO = {
     { display: "+91 80752 18806", raw: "8075218806" },
   ],
   whatsapp: [
-    { display: "+91 86063 90918", raw: "918606390918" },
-    { display: "+91 80752 18806", raw: "918075218806" },
+    { display: "+91 86063 90918", raw: "918606390918", primary: true },
+    { display: "+91 80752 18806", raw: "918075218806", primary: false },
   ],
-  // Equal email status - both emails are equal
+  // Both email addresses are equal in status
   emails: [
     { address: "sarathjayakumar98@gmail.com" },
     { address: "jayakumarkoodal334@gmail.com" },
   ],
   location: {
     primary: "Koodal, Pathanamthitta, Kerala",
-    label: "Major Branch & Working Sites — REQUIRES BUSINESS CONFIRMATION",
+    label: "Major Branch & Working Sites — Business-provided locations. Branch/working-site classification requires business confirmation.",
     sites: [
       "Koodal (Pathanamthitta)",
       "Pathanamthitta",
@@ -68,14 +68,14 @@ export const CONTACT_INFO = {
   },
 };
 
-// Canonical 9 core services
+// Canonical 9 core services with conservative descriptions
 export const CANONICAL_SERVICES = [
   {
     id: "structural-designing",
     title: "Structural Designing",
     slug: "structural-designing",
     iconName: "Ruler",
-    shortDesc: "Custom structural designs, engineering blueprints, and load calculations for safe construction.",
+    shortDesc: "Professional structural design and engineering services for safe building construction.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -83,7 +83,7 @@ export const CANONICAL_SERVICES = [
     title: "Building Estimation",
     slug: "building-estimation",
     iconName: "Calculator",
-    shortDesc: "Detailed material cost estimation, Bill of Quantities (BOQ), and budget planning.",
+    shortDesc: "Comprehensive building cost estimation and material budgeting services.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -91,7 +91,7 @@ export const CANONICAL_SERVICES = [
     title: "Building Construction Works",
     slug: "building-construction-works",
     iconName: "Building2",
-    shortDesc: "End-to-end civil construction execution for residential and commercial structures.",
+    shortDesc: "End-to-end building construction works for residential and commercial projects.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -99,7 +99,7 @@ export const CANONICAL_SERVICES = [
     title: "Building Planning",
     slug: "building-planning",
     iconName: "FileText",
-    shortDesc: "Architectural spatial planning, Vastu-compliant floor plans, and municipal drawings.",
+    shortDesc: "Architectural building planning and spatial layout services.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -107,7 +107,7 @@ export const CANONICAL_SERVICES = [
     title: "House Renovation",
     slug: "house-renovation",
     iconName: "Hammer",
-    shortDesc: "Modernization, floor extensions, roofing upgrades, and structural alterations.",
+    shortDesc: "Complete house renovation, structural modernization, and alteration works.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -115,7 +115,7 @@ export const CANONICAL_SERVICES = [
     title: "Interior Design",
     slug: "interior-design",
     iconName: "Paintbrush",
-    shortDesc: "Aesthetic spatial interior design, custom woodwork, false ceiling, and lighting concepts.",
+    shortDesc: "Custom interior design and space aesthetics services.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -123,7 +123,7 @@ export const CANONICAL_SERVICES = [
     title: "Site Supervision",
     slug: "site-supervision",
     iconName: "ShieldCheck",
-    shortDesc: "On-site technical supervision, quality monitoring, and workforce direction.",
+    shortDesc: "On-site construction supervision and technical quality oversight.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -131,7 +131,7 @@ export const CANONICAL_SERVICES = [
     title: "Plumbing Designing",
     slug: "plumbing-designing",
     iconName: "Wrench",
-    shortDesc: "Systematic plumbing layout design, drainage line planning, and sanitary utility engineering.",
+    shortDesc: "Plumbing system layout and sanitary design services.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -139,47 +139,53 @@ export const CANONICAL_SERVICES = [
     title: "3D Elevation",
     slug: "3d-elevation",
     iconName: "Box",
-    shortDesc: "Photorealistic 3D exterior visualization, architectural rendering, and color concepts.",
+    shortDesc: "Exterior 3D architectural elevation design and visual concepts.",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
 ];
 
-// Business-provided team roster, with individual roles only where confirmed
+// All 10 business-provided team roster entries
 export const TEAM_ROSTER = [
   {
     id: "jayakumar-ramachandran",
     name: "Jayakumar Ramachandran (Kochukuttan)",
     role: "Proprietor / Civil Engineer / Managing Director / Director",
+    location: "Koodal, Pathanamthitta, Kerala",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
     id: "sarath-jayakumar",
     name: "Sarath Jayakumar (Ph.D Scholar)",
     role: "Landscape Designer / Project Manager",
+    location: "Koodal, Pathanamthitta, Kerala",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
     id: "indrasena-reddy",
-    name: "Indrasena Reddy (Andra)",
+    name: "Indrasena Reddy",
     role: "Brand / Media Manager",
+    location: "Andhra Pradesh",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
     id: "anoop",
-    name: "Anoop (Kerala)",
+    name: "Anoop",
     role: "Brand / Media Manager",
+    location: "Kerala",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
     id: "rasika-sarje-ashok",
-    name: "Rasika Sarje Ashok (Maharashtra)",
+    name: "Rasika Sarje Ashok",
     role: "Landscaping Consultant",
+    location: "Maharashtra",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
     id: "smriti-pathania",
-    name: "Smriti Pathania (Himachal Pradesh)",
+    name: "Smriti Pathania",
     role: "Landscaping Consultant",
+    location: "Himachal Pradesh",
     status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
   },
   {
@@ -202,8 +208,10 @@ export const TEAM_ROSTER = [
   },
   {
     id: "head-electrical",
-    name: "Name Not Confirmed",
-    role: "Head — Electrical Department",
+    name: "Head — Electrical Department",
+    role: "Electrical Department",
     status: "REQUIRES_BUSINESS_CONFIRMATION",
+    confirmationNote: "Name to be confirmed",
+    isPendingName: true,
   },
 ];
