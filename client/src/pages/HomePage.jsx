@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PageMeta } from '../components/common/PageMeta';
 import { Container } from '../components/ui/Container';
@@ -7,12 +7,61 @@ import { SectionHeading } from '../components/ui/SectionHeading';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { StatCard } from '../components/common/StatCard';
 import { ServiceCard } from '../components/common/ServiceCard';
 import { TeamCard } from '../components/common/TeamCard';
-import { COMPANY_INFO, BUSINESS_CLAIMS, CANONICAL_SERVICES, TEAM_ROSTER, CONTACT_INFO } from '../utils/constants';
+import { COMPANY_INFO, BUSINESS_CLAIMS, CONTACT_INFO } from '../utils/constants';
+import { fetchServices, fetchTeam } from '../services/api';
 
 export const HomePage = () => {
+  const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [servicesError, setServicesError] = useState('');
+
+  const [team, setTeam] = useState([]);
+  const [teamLoading, setTeamLoading] = useState(true);
+  const [teamError, setTeamError] = useState('');
+
+  const loadServices = async () => {
+    try {
+      setServicesLoading(true);
+      setServicesError('');
+      const response = await fetchServices();
+      if (response && response.success && Array.isArray(response.data)) {
+        setServices(response.data);
+      } else {
+        setServices([]);
+      }
+    } catch (err) {
+      setServicesError(err.message || 'Unable to load services catalog from server');
+    } finally {
+      setServicesLoading(false);
+    }
+  };
+
+  const loadTeam = async () => {
+    try {
+      setTeamLoading(true);
+      setTeamError('');
+      const response = await fetchTeam();
+      if (response && response.success && Array.isArray(response.data)) {
+        setTeam(response.data);
+      } else {
+        setTeam([]);
+      }
+    } catch (err) {
+      setTeamError(err.message || 'Unable to load team roster from server');
+    } finally {
+      setTeamLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadServices();
+    loadTeam();
+  }, []);
+
   return (
     <>
       <PageMeta
@@ -79,18 +128,35 @@ export const HomePage = () => {
             title="Our Services"
             subtitle="The official canonical services provided by Buddha Mayoori Constructions."
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {CANONICAL_SERVICES.map((service, index) => (
-              <ServiceCard key={service.id} service={service} index={index} />
-            ))}
-          </div>
-          <div className="mt-10 text-center">
-            <Link to="/services">
-              <Button variant="dark" size="md">
-                View All Canonical Services →
+
+          {servicesLoading ? (
+            <div className="py-8 text-center">
+              <LoadingSpinner size="lg" />
+              <p className="mt-2 text-xs text-slate-500 font-medium">Loading Services...</p>
+            </div>
+          ) : servicesError ? (
+            <div className="max-w-xl mx-auto p-4 bg-red-50 border border-red-200 rounded text-center">
+              <p className="text-xs font-semibold text-red-800 mb-2">⚠️ {servicesError}</p>
+              <Button variant="primary" size="sm" onClick={loadServices}>
+                Retry Loading Services
               </Button>
-            </Link>
-          </div>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {services.slice(0, 6).map((service, index) => (
+                  <ServiceCard key={service.serviceId || service.id || service._id} service={service} index={index} />
+                ))}
+              </div>
+              <div className="mt-10 text-center">
+                <Link to="/services">
+                  <Button variant="dark" size="md">
+                    View All Canonical Services →
+                  </Button>
+                </Link>
+              </div>
+            </>
+          )}
         </Container>
       </Section>
 
@@ -102,18 +168,35 @@ export const HomePage = () => {
             title="Key Personnel Preview"
             subtitle="Business-provided team roster entries."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TEAM_ROSTER.slice(0, 4).map((member) => (
-              <TeamCard key={member.id} member={member} />
-            ))}
-          </div>
-          <div className="mt-8 text-center">
-            <Link to="/team">
-              <Button variant="ghost" size="md" className="text-amber-800 hover:bg-amber-50">
-                View Full 10-Entry Team Roster →
+
+          {teamLoading ? (
+            <div className="py-8 text-center">
+              <LoadingSpinner size="lg" />
+              <p className="mt-2 text-xs text-slate-500 font-medium">Loading Team Preview...</p>
+            </div>
+          ) : teamError ? (
+            <div className="max-w-xl mx-auto p-4 bg-red-50 border border-red-200 rounded text-center">
+              <p className="text-xs font-semibold text-red-800 mb-2">⚠️ {teamError}</p>
+              <Button variant="primary" size="sm" onClick={loadTeam}>
+                Retry Loading Team
               </Button>
-            </Link>
-          </div>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {team.slice(0, 4).map((member) => (
+                  <TeamCard key={member.memberId || member.id || member._id} member={member} />
+                ))}
+              </div>
+              <div className="mt-8 text-center">
+                <Link to="/team">
+                  <Button variant="ghost" size="md" className="text-amber-800 hover:bg-amber-50">
+                    View Full Team Roster →
+                  </Button>
+                </Link>
+              </div>
+            </>
+          )}
         </Container>
       </Section>
 

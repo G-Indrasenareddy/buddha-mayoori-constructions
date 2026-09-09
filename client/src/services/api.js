@@ -56,8 +56,10 @@ export const fetchServices = async () => {
     const response = await apiClient.get('/services');
     return response.data;
   } catch (error) {
-    console.warn('API unavailable, falling back to client constants:', error.message);
-    return null;
+    if (error.response && error.response.data) {
+      throw error.response.data.error || new Error('Failed to fetch services');
+    }
+    throw new Error(error.message || 'Network error while fetching services');
   }
 };
 
@@ -67,7 +69,35 @@ export const fetchTeam = async () => {
     const response = await apiClient.get('/team');
     return response.data;
   } catch (error) {
-    console.warn('API unavailable, falling back to client constants:', error.message);
-    return null;
+    if (error.response && error.response.data) {
+      throw error.response.data.error || new Error('Failed to fetch team roster');
+    }
+    throw new Error(error.message || 'Network error while fetching team roster');
+  }
+};
+
+// Helper function to fetch public projects
+export const fetchProjects = async (params = {}) => {
+  try {
+    const response = await apiClient.get('/projects', { params });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data.error || new Error('Failed to fetch projects');
+    }
+    throw new Error(error.message || 'Network error while fetching projects');
+  }
+};
+
+// Helper function to fetch single project by slug
+export const fetchProjectBySlug = async (slug) => {
+  try {
+    const response = await apiClient.get(`/projects/${slug}`);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data.error || new Error('Failed to fetch project details');
+    }
+    throw new Error(error.message || 'Network error while fetching project details');
   }
 };

@@ -1,14 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageMeta } from '../components/common/PageMeta';
 import { Container } from '../components/ui/Container';
 import { Section } from '../components/ui/Section';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { TeamCard } from '../components/common/TeamCard';
-import { TEAM_ROSTER } from '../utils/constants';
+import { fetchTeam } from '../services/api';
 
 export const TeamPage = () => {
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const loadTeam = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await fetchTeam();
+      if (response && response.success && Array.isArray(response.data)) {
+        setTeam(response.data);
+      } else {
+        setTeam([]);
+      }
+    } catch (err) {
+      setError(err.message || 'Unable to load team roster from server');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTeam();
+  }, []);
+
   return (
     <>
       <PageMeta
@@ -31,19 +58,38 @@ export const TeamPage = () => {
         </Container>
       </Section>
 
-      {/* Full 10-Entry Team Roster Grid */}
+      {/* Full Team Roster Grid */}
       <Section background="default" padding="default">
         <Container>
           <SectionHeading
-            badgeText="Complete 10-Entry Roster"
+            badgeText="Complete Roster"
             title="Leadership, Consultants & Department Leads"
             subtitle="Business-provided team roster, with individual roles only where confirmed."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {TEAM_ROSTER.map((member) => (
-              <TeamCard key={member.id} member={member} />
-            ))}
-          </div>
+
+          {loading ? (
+            <div className="py-12 text-center">
+              <LoadingSpinner size="lg" />
+              <p className="mt-3 text-xs text-slate-500 font-medium">Loading Team Roster...</p>
+            </div>
+          ) : error ? (
+            <div className="max-w-xl mx-auto p-6 bg-red-50 border border-red-200 rounded-lg text-center">
+              <p className="text-sm font-semibold text-red-800 mb-3">⚠️ {error}</p>
+              <Button variant="primary" size="sm" onClick={loadTeam}>
+                Retry Loading Team
+              </Button>
+            </div>
+          ) : team.length === 0 ? (
+            <div className="p-8 text-center bg-white rounded-lg border border-slate-200 text-xs text-slate-500">
+              No team roster members currently available.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {team.map((member) => (
+                <TeamCard key={member.memberId || member.id || member._id} member={member} />
+              ))}
+            </div>
+          )}
         </Container>
       </Section>
 
