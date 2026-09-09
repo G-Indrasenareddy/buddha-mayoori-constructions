@@ -24,6 +24,7 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     color-scheme: light;
+    overflow-x: hidden;
   }
 
   body {
@@ -36,6 +37,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    width: 100%;
   }
 
   /* Accessible Focus States */
@@ -51,6 +53,12 @@
 
   button {
     font-family: inherit;
+  }
+
+  /* Ensure smooth wrapping for long text strings on small screens */
+  p, h1, h2, h3, h4, h5, h6, span, a {
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 }
 

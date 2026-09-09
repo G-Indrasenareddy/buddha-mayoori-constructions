@@ -67,8 +67,8 @@ export const Footer = () => {
                 <p>💬 WhatsApp 2: <a href={`https://wa.me/${CONTACT_INFO.whatsapp[1].raw}`} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 font-medium">{CONTACT_INFO.whatsapp[1].display}</a></p>
               </div>
               <div className="pt-1 border-t border-slate-800 space-y-1">
-                <p>✉️ <a href={`mailto:${CONTACT_INFO.emails[0].address}`} className="hover:text-amber-400">{CONTACT_INFO.emails[0].address}</a></p>
-                <p>✉️ <a href={`mailto:${CONTACT_INFO.emails[1].address}`} className="hover:text-amber-400">{CONTACT_INFO.emails[1].address}</a></p>
+                <p>✉️ <a href={`mailto:${CONTACT_INFO.emails[0].address}`} className="hover:text-amber-400 break-all">{CONTACT_INFO.emails[0].address}</a></p>
+                <p>✉️ <a href={`mailto:${CONTACT_INFO.emails[1].address}`} className="hover:text-amber-400 break-all">{CONTACT_INFO.emails[1].address}</a></p>
               </div>
             </div>
           </div>
