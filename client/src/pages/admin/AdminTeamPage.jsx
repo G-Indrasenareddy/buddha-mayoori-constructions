@@ -262,6 +262,20 @@ export const AdminTeamPage = () => {
                 onChange={(e) => setFormData({ ...formData, confirmationNote: e.target.value })}
               />
 
+              <div className="flex items-center gap-2 pt-1 pb-1">
+                <input
+                  type="checkbox"
+                  id="isPendingName"
+                  name="isPendingName"
+                  checked={formData.isPendingName}
+                  onChange={(e) => setFormData({ ...formData, isPendingName: e.target.checked })}
+                  className="h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
+                />
+                <label htmlFor="isPendingName" className="text-xs font-medium text-slate-700 cursor-pointer select-none">
+                  Name Pending Official Confirmation
+                </label>
+              </div>
+
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
                 <Button type="button" variant="secondary" size="sm" onClick={() => setIsModalOpen(false)} disabled={formLoading}>
                   Cancel
