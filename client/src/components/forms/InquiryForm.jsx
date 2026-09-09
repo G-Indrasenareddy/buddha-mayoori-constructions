@@ -94,11 +94,8 @@ export const InquiryForm = () => {
       await submitEnquiry(payload);
       setIsSubmitted(true);
     } catch (err) {
-      // If API fails or backend offline, still allow graceful submission feedback
-      console.warn('API submission notice:', err.message);
-      setSubmitError(err.message || 'Unable to submit enquiry to server. Please try calling directly.');
-      // Still set submitted state if user wants frontend validation feedback
-      setIsSubmitted(true);
+      console.warn('API submission error:', err.message);
+      setSubmitError(err.message || 'Unable to submit enquiry to server. Please try again or contact us directly by phone.');
     } finally {
       setIsSubmitting(false);
     }
