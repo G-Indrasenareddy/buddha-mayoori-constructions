@@ -10,6 +10,33 @@ export const apiClient = axios.create({
   timeout: 10000,
 });
 
+// Request interceptor to attach Bearer token if present
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('bmc_admin_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor to handle unauthenticated 401 errors
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      sessionStorage.removeItem('bmc_admin_token');
+      sessionStorage.removeItem('bmc_admin_user');
+      if (window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
+        window.location.href = '/admin/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Helper function to submit contact or building estimate request
 export const submitEnquiry = async (enquiryData) => {
   try {
