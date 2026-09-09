@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
+import dns from 'dns';
 import { logger } from '../utils/logger.js';
+
+try {
+  dns.setDefaultResultOrder('ipv4first');
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {}
 
 export const connectDB = async () => {
   const connUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/buddha_mayoori_db';
