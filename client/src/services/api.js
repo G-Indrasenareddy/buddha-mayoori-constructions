@@ -101,3 +101,34 @@ export const fetchProjectBySlug = async (slug) => {
     throw new Error(error.message || 'Network error while fetching project details');
   }
 };
+
+// Helper function to upload project media asset (cover or gallery image) to Cloudinary
+export const uploadProjectMedia = async (formData) => {
+  try {
+    const response = await apiClient.post('/admin/projects/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data.error || new Error('Failed to upload media asset');
+    }
+    throw new Error(error.message || 'Network error while uploading media asset');
+  }
+};
+
+// Helper function to delete media asset belonging to a specific project
+export const deleteProjectMedia = async (projectId, mediaId) => {
+  try {
+    const response = await apiClient.delete(`/admin/projects/${projectId}/media/${mediaId}`);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data.error || new Error('Failed to delete media asset');
+    }
+    throw new Error(error.message || 'Network error while deleting media asset');
+  }
+};
+

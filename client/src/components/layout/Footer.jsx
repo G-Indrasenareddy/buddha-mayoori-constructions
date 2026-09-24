@@ -1,9 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { COMPANY_INFO, CONTACT_INFO, CANONICAL_SERVICES } from '../../utils/constants';
+import { COMPANY_INFO, CONTACT_INFO } from '../../utils/constants';
+import { fetchServices } from '../../services/api';
 import logoImg from '../../assets/buddha-mayoori-logo.jpg';
 
 export const Footer = () => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchServices()
+      .then((res) => {
+        if (isMounted) {
+          if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+            setServices(res.data);
+            setError(false);
+          } else {
+            setServices([]);
+            setError(true);
+          }
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setServices([]);
+          setError(true);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
@@ -13,7 +49,7 @@ export const Footer = () => {
             <div className="flex items-center gap-3 mb-4">
               <img
                 src={logoImg}
-                alt="Buddha Mayoori Constructions Official Logo"
+                alt="Buddha Mayoori Construction Official Logo"
                 className="h-10 w-10 object-contain rounded border border-slate-700 bg-white"
               />
               <div>
@@ -43,16 +79,22 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Col 3: Canonical Services */}
+          {/* Col 3: Services */}
           <div>
-            <h4 className="text-white font-semibold mb-3 text-sm">Our Canonical Services</h4>
-            <ul className="space-y-2 text-xs text-slate-400">
-              {CANONICAL_SERVICES.map((service) => (
-                <li key={service.id}>
-                  <Link to="/services" className="hover:text-amber-400 transition-colors">{service.title}</Link>
-                </li>
-              ))}
-            </ul>
+            <h4 className="text-white font-semibold mb-3 text-sm">Our Services</h4>
+            {loading ? (
+              <p className="text-xs text-slate-500">Loading services...</p>
+            ) : error || services.length === 0 ? (
+              <p className="text-xs text-slate-500">Services catalog temporarily unavailable.</p>
+            ) : (
+              <ul className="space-y-2 text-xs text-slate-400">
+                {services.slice(0, 9).map((service) => (
+                  <li key={service.serviceId || service.id || service._id}>
+                    <Link to="/services" className="hover:text-amber-400 transition-colors">{service.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Col 4: Contact Directory & WhatsApp */}

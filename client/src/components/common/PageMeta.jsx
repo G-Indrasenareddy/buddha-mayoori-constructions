@@ -6,7 +6,7 @@ import { COMPANY_INFO } from '../../utils/constants';
  */
 export const PageMeta = ({
   title = COMPANY_INFO.name,
-  description = "Buddha Mayoori Constructions — Civil construction and structural designing services in Kerala since 1990.",
+  description = "Buddha Mayoori Construction — Civil construction and structural designing services in Kerala since 1990.",
 }) => {
   useEffect(() => {
     // Dynamic document title

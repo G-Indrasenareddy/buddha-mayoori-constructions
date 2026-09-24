@@ -42,7 +42,7 @@ export const MobileDrawer = ({ isOpen, onClose, navLinks }) => {
             <div className="flex items-center gap-3">
               <img
                 src={logoImg}
-                alt="Buddha Mayoori Constructions Logo"
+                alt="Buddha Mayoori Construction Logo"
                 className="h-12 w-12 object-contain rounded-md border border-slate-200 shrink-0"
               />
               <span className="font-bold text-slate-900 text-sm leading-tight">{COMPANY_INFO.name}</span>

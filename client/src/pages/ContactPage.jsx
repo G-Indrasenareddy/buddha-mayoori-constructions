@@ -13,7 +13,7 @@ export const ContactPage = () => {
     <>
       <PageMeta
         title="Contact Us"
-        description="Contact directory for Buddha Mayoori Constructions — Phones, WhatsApp, Email, & Location."
+        description="Contact directory for Buddha Mayoori Construction — Phones, WhatsApp, Email, & Location."
       />
 
       {/* Header Banner */}
@@ -25,7 +25,7 @@ export const ContactPage = () => {
               Contact Directory
             </h1>
             <p className="mt-2 text-slate-300 text-base">
-              Reach out to Buddha Mayoori Constructions via phone, WhatsApp, email, or inquiry form.
+              Reach out to Buddha Mayoori Construction via phone, WhatsApp, email, or inquiry form.
             </p>
           </div>
         </Container>
@@ -74,12 +74,12 @@ export const ContactPage = () => {
               </ul>
             </Card>
 
-            {/* Equal Email Card */}
+            {/* Email Contacts Card */}
             <Card hoverEffect>
               <div className="w-10 h-10 rounded bg-slate-100 text-slate-900 flex items-center justify-center font-bold text-lg mb-3">
                 ✉️
               </div>
-              <h3 className="font-bold text-slate-900 text-base mb-3">Equal Email Directory</h3>
+              <h3 className="font-bold text-slate-900 text-base mb-3">Email Contacts</h3>
               <ul className="space-y-2 text-sm text-slate-700">
                 {CONTACT_INFO.emails.map((email, idx) => (
                   <li key={idx}>
@@ -98,7 +98,7 @@ export const ContactPage = () => {
             <p className="text-sm font-semibold text-slate-800 mb-3">
               📍 Primary Location: <span className="text-amber-800 font-bold">{CONTACT_INFO.location.primary}</span>
             </p>
-            <div className="p-4 bg-slate-50 rounded border border-slate-200 mb-3">
+            <div className="p-4 bg-slate-50 rounded border border-slate-200">
               <p className="text-xs font-semibold text-slate-700 mb-2">
                 {CONTACT_INFO.location.label}
               </p>
@@ -110,9 +110,6 @@ export const ContactPage = () => {
                 ))}
               </div>
             </div>
-            <p className="text-xs text-slate-500 italic">
-              Note: Branch vs active working-site classification requires business confirmation.
-            </p>
           </Card>
 
           {/* Building Estimate Request Form Container */}

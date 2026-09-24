@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { CANONICAL_SERVICES } from '../../utils/constants';
-import { submitEnquiry } from '../../services/api';
+import { submitEnquiry, fetchServices } from '../../services/api';
 import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 import { Select } from '../ui/Select';
@@ -10,6 +9,10 @@ import { Button } from '../ui/Button';
 export const InquiryForm = () => {
   const [searchParams] = useSearchParams();
   const preselectedService = searchParams.get('service') || '';
+
+  const [servicesList, setServicesList] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [servicesError, setServicesError] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -25,6 +28,37 @@ export const InquiryForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchServices()
+      .then((res) => {
+        if (isMounted) {
+          if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+            setServicesList(res.data);
+            setServicesError(false);
+          } else {
+            setServicesList([]);
+            setServicesError(true);
+          }
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setServicesList([]);
+          setServicesError(true);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setServicesLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (preselectedService) {
@@ -101,7 +135,7 @@ export const InquiryForm = () => {
     }
   };
 
-  const serviceOptions = CANONICAL_SERVICES.map(s => ({
+  const serviceOptions = servicesList.map(s => ({
     value: s.title,
     label: s.title,
   }));
@@ -120,7 +154,7 @@ export const InquiryForm = () => {
       <div className="mb-6">
         <h3 className="text-xl font-bold text-slate-900">Building Estimate Request Form</h3>
         <p className="text-sm text-slate-600 mt-1">
-          Fill out the form below to request a building estimate or consultation from Buddha Mayoori Constructions.
+          Fill out the form below to request a building estimate or consultation from Buddha Mayoori Construction.
         </p>
       </div>
 
@@ -221,8 +255,9 @@ export const InquiryForm = () => {
               options={serviceOptions}
               value={formData.serviceRequired}
               onChange={handleChange}
-              error={errors.serviceRequired}
-              placeholder="Select from 9 Canonical Services"
+              error={errors.serviceRequired || (servicesError ? 'Services catalog is currently unavailable. Please contact us directly by phone.' : '')}
+              placeholder={servicesLoading ? 'Loading services...' : servicesError || servicesList.length === 0 ? 'Service catalog unavailable' : 'Select a service'}
+              disabled={servicesLoading || servicesError || servicesList.length === 0}
               required
             />
 

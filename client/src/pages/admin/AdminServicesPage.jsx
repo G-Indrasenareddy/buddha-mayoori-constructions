@@ -80,7 +80,7 @@ export const AdminServicesPage = () => {
       <div>
         <h2 className="text-xl font-bold text-slate-900">Canonical Services Management</h2>
         <p className="text-xs text-slate-500">
-          Manage descriptions and ordering for the 9 canonical core services of Buddha Mayoori Constructions.
+          Manage descriptions and ordering for the 9 canonical core services of Buddha Mayoori Construction.
         </p>
       </div>
 

@@ -47,7 +47,7 @@ export const Navbar = () => {
           <Link to="/" className="flex items-center gap-3.5 sm:gap-4 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg">
             <img
               src={logoImg}
-              alt="Buddha Mayoori Constructions Official Logo"
+              alt="Buddha Mayoori Construction Official Logo"
               className="h-12 w-12 sm:h-16 sm:w-16 lg:h-[76px] lg:w-[76px] object-contain rounded-lg border border-slate-200 bg-white shadow-xs group-hover:border-amber-400 transition-all duration-200 shrink-0"
             />
             <div className="flex flex-col justify-center">

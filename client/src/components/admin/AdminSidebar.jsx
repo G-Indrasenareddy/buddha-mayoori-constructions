@@ -18,7 +18,7 @@ export const AdminSidebar = () => {
       <div className="p-4 border-b border-slate-800 flex items-center gap-3">
         <img
           src={logoImg}
-          alt="Buddha Mayoori Constructions Logo"
+          alt="Buddha Mayoori Construction Logo"
           className="h-10 w-10 object-contain rounded bg-white p-0.5 border border-slate-700"
         />
         <div>

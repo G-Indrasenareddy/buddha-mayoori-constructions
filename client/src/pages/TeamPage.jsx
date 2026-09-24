@@ -40,19 +40,19 @@ export const TeamPage = () => {
     <>
       <PageMeta
         title="Team"
-        description="Business-provided team roster for Buddha Mayoori Constructions."
+        description="Our team of civil engineers, project managers, consultants, and supervisors at Buddha Mayoori Construction."
       />
 
       {/* Header Banner */}
       <Section background="dark" padding="compact">
         <Container>
           <div className="max-w-3xl">
-            <Badge variant="amber" className="mb-2">Personnel</Badge>
+            <Badge variant="amber" className="mb-2">Our People</Badge>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
-              Our Team Roster
+              Our Team
             </h1>
             <p className="mt-2 text-slate-300 text-base">
-              Business-provided personnel roster and department heads.
+              Leadership, engineering consultants, and department leads.
             </p>
           </div>
         </Container>
@@ -62,9 +62,9 @@ export const TeamPage = () => {
       <Section background="default" padding="default">
         <Container>
           <SectionHeading
-            badgeText="Complete Roster"
+            badgeText="Our Team"
             title="Leadership, Consultants & Department Leads"
-            subtitle="Business-provided team roster, with individual roles only where confirmed."
+            subtitle="Our experienced team of civil engineers, project managers, consultants, and site supervisors."
           />
 
           {loading ? (
@@ -97,7 +97,7 @@ export const TeamPage = () => {
       <Section background="white" padding="default">
         <Container>
           <Card className="bg-slate-900 text-white p-8 text-center border-slate-800">
-            <Badge variant="amber" className="mb-3">Workforce Claim</Badge>
+            <Badge variant="amber" className="mb-3">Experienced Workforce</Badge>
             <h3 className="text-2xl sm:text-3xl font-extrabold mb-2">
               Over 100+ Experienced Labours
             </h3>

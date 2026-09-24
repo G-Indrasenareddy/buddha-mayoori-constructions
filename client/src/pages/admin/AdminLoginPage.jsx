@@ -47,11 +47,11 @@ export const AdminLoginPage = () => {
         <div className="text-center mb-6">
           <img
             src={logoImg}
-            alt="Buddha Mayoori Constructions Logo"
+            alt="Buddha Mayoori Construction Logo"
             className="h-16 w-16 mx-auto object-contain rounded border border-slate-200 p-1 mb-3 bg-white"
           />
           <h2 className="text-2xl font-bold text-slate-900">Admin Login</h2>
-          <p className="text-xs text-slate-500 mt-1">Buddha Mayoori Constructions Management Console</p>
+          <p className="text-xs text-slate-500 mt-1">Buddha Mayoori Construction Management Console</p>
         </div>
 
         {error && (

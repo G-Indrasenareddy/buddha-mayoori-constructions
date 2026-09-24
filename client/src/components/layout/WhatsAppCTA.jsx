@@ -9,7 +9,7 @@ export const WhatsAppCTA = () => {
       href={`https://wa.me/${primaryWhatsApp.raw}`}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat with Buddha Mayoori Constructions on WhatsApp"
+      aria-label="Chat with Buddha Mayoori Construction on WhatsApp"
       className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 text-white font-semibold text-sm shadow-lg hover:bg-emerald-500 active:bg-emerald-700 transition-all duration-200 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 min-h-[48px]"
     >
       <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">

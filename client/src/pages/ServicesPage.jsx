@@ -39,31 +39,31 @@ export const ServicesPage = () => {
     <>
       <PageMeta
         title="Services"
-        description="Canonical 9 Core Services offered by Buddha Mayoori Constructions."
+        description="Civil construction, structural designing, building estimation, and renovation services offered by Buddha Mayoori Construction across Kerala."
       />
 
       {/* Header Banner */}
       <Section background="dark" padding="compact">
         <Container>
           <div className="max-w-3xl">
-            <Badge variant="amber" className="mb-2">Official Offerings</Badge>
+            <Badge variant="amber" className="mb-2">Services & Engineering</Badge>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
               Our Services
             </h1>
             <p className="mt-2 text-slate-300 text-base">
-              The canonical 9 services supplied by Buddha Mayoori Constructions.
+              Comprehensive civil construction, structural designing, and estimation services across Kerala.
             </p>
           </div>
         </Container>
       </Section>
 
-      {/* Canonical 9 Services Showcase Grid */}
+      {/* Services Showcase Grid */}
       <Section background="default" padding="default">
         <Container>
           <SectionHeading
-            badgeText="Canonical 9 Services"
+            badgeText="Our Offerings"
             title="Service Catalog"
-            subtitle="All 9 official canonical services established in official business materials."
+            subtitle="Full-spectrum civil construction and structural design services."
           />
 
           {loading ? (

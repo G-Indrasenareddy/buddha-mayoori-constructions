@@ -1,5 +1,13 @@
 import mongoose from 'mongoose';
 
+const galleryItemSchema = new mongoose.Schema({
+  publicId: { type: String, default: '' },
+  url: { type: String, required: [true, 'Gallery image URL is required'] },
+  caption: { type: String, trim: true, default: '' },
+  categoryTag: { type: String, default: 'GENERAL' },
+  displayOrder: { type: Number, default: 0 },
+});
+
 const projectSchema = new mongoose.Schema(
   {
     title: {
@@ -30,6 +38,11 @@ const projectSchema = new mongoose.Schema(
       required: [true, 'Project location is required'],
       trim: true,
     },
+    status: {
+      type: String,
+      enum: ['ONGOING', 'COMPLETED'],
+      required: [true, 'Project status is required (ONGOING or COMPLETED)'],
+    },
     shortDescription: {
       type: String,
       required: [true, 'Short description is required'],
@@ -42,14 +55,10 @@ const projectSchema = new mongoose.Schema(
       type: Number,
     },
     coverImage: {
-      type: String,
-      default: '/assets/project-placeholder.jpg',
+      publicId: { type: String, default: '' },
+      url: { type: String, default: '/assets/project-placeholder.jpg' },
     },
-    galleryImages: [
-      {
-        type: String,
-      },
-    ],
+    galleryImages: [galleryItemSchema],
     featured: {
       type: Boolean,
       default: false,
@@ -71,3 +80,4 @@ const projectSchema = new mongoose.Schema(
 projectSchema.index({ featured: -1, isPublished: -1 });
 
 export const Project = mongoose.model('Project', projectSchema);
+

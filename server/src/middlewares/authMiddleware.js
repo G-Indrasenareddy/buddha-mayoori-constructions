@@ -14,8 +14,12 @@ export const protect = asyncHandler(async (req, res, next) => {
     return next(new AppError('Unauthenticated. Access token is required.', 401));
   }
 
+  if (!process.env.JWT_SECRET) {
+    return next(new AppError('Server configuration error: Authentication secret missing.', 500));
+  }
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'buddha_mayoori_secure_jwt_secret_key_2026');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 
     if (!user) {

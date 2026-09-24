@@ -39,6 +39,14 @@ app.use(
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
+// Security Headers Middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
 // Request Logger Middleware
 app.use((req, res, next) => {
   const start = Date.now();
@@ -64,5 +72,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  logger.info(`Buddha Mayoori Constructions Backend Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
+  logger.info(`Buddha Mayoori Construction Backend Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
 });

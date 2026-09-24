@@ -35,7 +35,7 @@ export default function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="services" element={<ServicesPage />} />
             <Route path="projects" element={<ProjectsPage />} />
-            <Route path="projects/:projectId" element={<ProjectDetailPage />} />
+            <Route path="projects/:slug" element={<ProjectDetailPage />} />
             <Route path="team" element={<TeamPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="request-a-quote" element={<QuotePage />} />

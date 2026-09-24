@@ -13,3 +13,17 @@ export const enquiryRateLimiter = rateLimit({
     },
   },
 });
+
+export const loginRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 login attempts per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      statusCode: 429,
+      message: 'Too many login attempts from this IP. Please try again after 15 minutes.',
+    },
+  },
+});

@@ -9,7 +9,7 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { fetchProjects } from '../services/api';
-import { MapPin, ArrowRight } from 'lucide-react';
+import { MapPin, ArrowRight, Camera } from 'lucide-react';
 
 export const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -41,7 +41,7 @@ export const ProjectsPage = () => {
     <>
       <PageMeta
         title="Projects"
-        description="Project Portfolio Showcase — Buddha Mayoori Constructions."
+        description="Project Portfolio Showcase — Buddha Mayoori Construction."
       />
 
       {/* Header Banner */}
@@ -110,34 +110,76 @@ export const ProjectsPage = () => {
           ) : (
             /* Real Project Portfolio Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
-                <Card key={project._id} hoverEffect className="flex flex-col justify-between h-full bg-white border-slate-200">
-                  <div>
-                    <div className="mb-3 flex items-center justify-between">
-                      <Badge variant="amber">{project.category}</Badge>
-                      {project.completionYear && (
-                        <span className="text-[11px] font-semibold text-slate-500">{project.completionYear}</span>
+              {projects.map((project) => {
+                const coverUrl = typeof project.coverImage === 'string' ? project.coverImage : project.coverImage?.url;
+                const photoCount = (project.galleryImages?.length || 0) + (coverUrl ? 1 : 0);
+
+                return (
+                  <Card key={project._id} hoverEffect className="flex flex-col justify-between h-full bg-white border-slate-200 overflow-hidden">
+                    <div>
+                      {/* Cover Photo / Thumbnail Header */}
+                      {coverUrl && (
+                        <div className="relative w-full h-48 bg-slate-100 overflow-hidden border-b border-slate-100 mb-4">
+                          <img
+                            src={coverUrl}
+                            alt={project.title}
+                            className="w-full h-full object-cover transition-transform duration-300"
+                            onError={(e) => {
+                              e.target.parentElement.style.display = 'none';
+                            }}
+                          />
+                          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                            {project.status === 'ONGOING' ? (
+                              <span className="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2 py-0.5 rounded-full border border-amber-300 shadow-xs backdrop-blur-xs">
+                                🏗️ ONGOING
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold text-emerald-900 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-300 shadow-xs backdrop-blur-xs">
+                                ✓ COMPLETED
+                              </span>
+                            )}
+                          </div>
+                          {photoCount > 0 && (
+                            <div className="absolute bottom-3 right-3 text-[10px] font-semibold text-white bg-slate-900/80 px-2 py-0.5 rounded-md flex items-center gap-1 backdrop-blur-xs">
+                              <Camera className="w-3 h-3" /> {photoCount} {photoCount === 1 ? 'Photo' : 'Photos'}
+                            </div>
+                          )}
+                        </div>
                       )}
+
+                      <div className="px-4 pt-1">
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                          <Badge variant="amber">{project.category}</Badge>
+                          {project.status === 'COMPLETED' && project.completionYear && (
+                            <span className="text-[11px] font-semibold text-slate-500">{project.completionYear}</span>
+                          )}
+                          {!coverUrl && (
+                            <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                              {project.status === 'ONGOING' ? '🏗️ ONGOING' : '✓ COMPLETED'}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-2 leading-tight">{project.title}</h3>
+                        <p className="text-xs text-slate-600 mb-3 flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                          <span>{project.location}</span>
+                        </p>
+                        <p className="text-xs text-slate-600 leading-relaxed line-clamp-3 mb-4">
+                          {project.shortDescription}
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2 leading-tight">{project.title}</h3>
-                    <p className="text-xs text-slate-600 mb-3 flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      <span>{project.location}</span>
-                    </p>
-                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-3 mb-4">
-                      {project.shortDescription}
-                    </p>
-                  </div>
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                    <Link
-                      to={`/projects/${project.slug}`}
-                      className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
-                    >
-                      View Details <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </Card>
-              ))}
+                    <div className="p-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                      <Link
+                        to={`/projects/${project.slug}`}
+                        className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
+                      >
+                        View Project & Gallery <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </Container>

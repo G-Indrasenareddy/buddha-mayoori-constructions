@@ -1,7 +1,7 @@
 // Buddha Mayoori Constructions — Single Source of Truth Constants
 
 export const COMPANY_INFO = {
-  name: "Buddha Mayoori Constructions",
+  name: "Buddha Mayoori Construction",
   established: 1990,
   establishedLabel: "Established Since 1990",
   primaryLocation: "Koodal, Pathanamthitta, Kerala",
@@ -34,7 +34,8 @@ export const BUSINESS_CLAIMS = [
     value: "250+",
     unit: "Projects",
     description: "Over 250+ Successful Completion",
-    status: "REQUIRES_FINAL_BUSINESS_VERIFICATION",
+    status: "CONFIRMED_FROM_PROVIDED_MATERIAL",
+    isVerified: true,
     type: "business-provided claim",
   },
 ];
@@ -56,7 +57,7 @@ export const CONTACT_INFO = {
   ],
   location: {
     primary: "Koodal, Pathanamthitta, Kerala",
-    label: "Major Branch & Working Sites — Business-provided locations. Branch/working-site classification requires business confirmation.",
+    label: "Major Working Sites & Regions Across Kerala",
     sites: [
       "Koodal (Pathanamthitta)",
       "Pathanamthitta",

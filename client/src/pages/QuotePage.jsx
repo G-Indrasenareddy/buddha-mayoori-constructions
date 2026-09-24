@@ -11,7 +11,7 @@ export const QuotePage = () => {
     <>
       <PageMeta
         title="Request a Building Estimate"
-        description="Request a Building Estimate from Buddha Mayoori Constructions."
+        description="Request a Building Estimate from Buddha Mayoori Construction."
       />
 
       {/* Header Banner */}
