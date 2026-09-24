@@ -12,6 +12,10 @@ import {
   deleteProject,
   uploadProjectMedia,
   deleteProjectMedia,
+  getAdminHomepageSlider,
+  selectHomepageMedia,
+  deselectHomepageMedia,
+  reorderHomepageSlider,
 } from '../../controllers/adminProjectController.js';
 import {
   getAdminServices,
@@ -22,12 +26,22 @@ import {
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
+  uploadTeamPhoto,
 } from '../../controllers/adminTeamController.js';
+
 import {
   getAdminEnquiries,
   getAdminEnquiryById,
   updateEnquiryStatus,
 } from '../../controllers/adminEnquiryController.js';
+import {
+  getAdminReviews,
+  createCustomerReview,
+  updateCustomerReview,
+  deleteCustomerReview,
+  reorderCustomerReviews,
+  uploadReviewPhoto,
+} from '../../controllers/adminCustomerReviewController.js';
 
 const router = express.Router();
 
@@ -116,11 +130,18 @@ router.post('/projects', validate(projectCreateValidation), createProject);
 router.put('/projects/:id', validate(projectUpdateValidation), updateProject);
 router.delete('/projects/:id', deleteProject);
 
+// Admin Homepage Slider Management
+router.get('/homepage-slider', getAdminHomepageSlider);
+router.post('/homepage-slider/select', selectHomepageMedia);
+router.post('/homepage-slider/deselect/:mediaId', deselectHomepageMedia);
+router.put('/homepage-slider/reorder', reorderHomepageSlider);
+
 // Canonical Services
 router.get('/services', getAdminServices);
 router.put('/services/:id', validate(serviceUpdateValidation), updateService);
 
 // Team Roster CRUD
+router.post('/team/upload', upload.single('file'), validateImageSignatures, uploadTeamPhoto);
 router.get('/team', getAdminTeam);
 router.post('/team', validate(teamCreateValidation), createTeamMember);
 router.put('/team/:id', validate(teamUpdateValidation), updateTeamMember);
@@ -130,5 +151,13 @@ router.delete('/team/:id', deleteTeamMember);
 router.get('/enquiries', getAdminEnquiries);
 router.get('/enquiries/:id', getAdminEnquiryById);
 router.patch('/enquiries/:id/status', validate(enquiryStatusUpdateValidation), updateEnquiryStatus);
+
+// Customer Reviews CRUD & Photo Upload
+router.get('/reviews', getAdminReviews);
+router.post('/reviews/upload', upload.single('file'), validateImageSignatures, uploadReviewPhoto);
+router.post('/reviews', createCustomerReview);
+router.put('/reviews/reorder', reorderCustomerReviews);
+router.put('/reviews/:id', updateCustomerReview);
+router.delete('/reviews/:id', deleteCustomerReview);
 
 export default router;

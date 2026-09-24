@@ -12,9 +12,11 @@ import { StatCard } from '../components/common/StatCard';
 import { ServiceCard } from '../components/common/ServiceCard';
 import { TeamCard } from '../components/common/TeamCard';
 import { ProjectSlider } from '../components/common/ProjectSlider';
+import { TestimonialSlider } from '../components/common/TestimonialSlider';
 import { COMPANY_INFO, BUSINESS_CLAIMS, CONTACT_INFO } from '../utils/constants';
 import { fetchServices, fetchTeam } from '../services/api';
 import logoImg from '../assets/buddha-mayoori-logo.jpg';
+import chairmanImg from '../assets/jaikumar-ramachandran.jpg';
 
 export const HomePage = () => {
   const [services, setServices] = useState([]);
@@ -261,6 +263,62 @@ export const HomePage = () => {
         </Container>
       </Section>
 
+      {/* Chairman / Visionary Section */}
+      <Section background="default" padding="compact" className="border-y border-slate-200/80 relative overflow-hidden bg-slate-50/80">
+        <Container>
+          <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
+            {/* 1. Eyebrow Heading */}
+            <div className="mb-6 text-center">
+              <div className="text-xs sm:text-sm uppercase tracking-[0.2em] font-bold text-amber-700 flex items-center justify-center gap-2">
+                <span className="w-5 sm:w-8 h-px bg-amber-500/40 inline-block" aria-hidden="true"></span>
+                <span>THE VISIONARY BEHIND</span>
+                <span className="w-5 sm:w-8 h-px bg-amber-500/40 inline-block" aria-hidden="true"></span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-wider uppercase mt-1">
+                BUDDHA MAYOORI
+              </h3>
+            </div>
+
+            {/* 2. Architectural Framed Chairman Photo Container */}
+            <div className="relative mb-6 group w-full flex justify-center items-center">
+              {/* Subtle Inline SVG Architectural Blueprint Lines (Background Decorative Layer) */}
+              <div className="absolute -inset-4 sm:-inset-6 pointer-events-none flex items-center justify-center" aria-hidden="true">
+                <svg className="w-full h-full max-w-[700px] max-h-[460px] text-slate-300/60" viewBox="0 0 640 400" fill="none" stroke="currentColor">
+                  <rect x="20" y="20" width="600" height="360" rx="36" strokeWidth="1" strokeDasharray="4 4" className="text-amber-500/25" />
+                  <line x1="320" y1="10" x2="320" y2="390" strokeWidth="1" strokeDasharray="2 4" />
+                  <line x1="10" y1="200" x2="630" y2="200" strokeWidth="1" strokeDasharray="2 4" />
+                  <path d="M 40 70 L 40 30 L 80 30" strokeWidth="1.5" className="text-amber-600/40" />
+                  <path d="M 600 70 L 600 30 L 560 30" strokeWidth="1.5" className="text-amber-600/40" />
+                  <path d="M 40 330 L 40 370 L 80 370" strokeWidth="1.5" className="text-amber-600/40" />
+                  <path d="M 600 330 L 600 370 L 560 370" strokeWidth="1.5" className="text-amber-600/40" />
+                </svg>
+              </div>
+
+              {/* Premium Wide Landscape Founder Photo Frame */}
+              <div className="relative z-10 w-[min(720px,92vw)] p-2.5 sm:p-3.5 bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/80 transition-shadow duration-300 hover:shadow-2xl">
+                <div className="w-full bg-slate-50/90 rounded-2xl overflow-hidden border border-amber-500/20 p-1.5 sm:p-2 flex items-center justify-center">
+                  <img
+                    src={chairmanImg}
+                    alt="Jayakumar Ramachandran - Chairman of Buddha Mayoori Construction"
+                    className="w-full h-auto object-contain rounded-xl shadow-xs"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Chairman Name */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-2">
+              Jayakumar Ramachandran
+            </h2>
+
+            {/* 4. Supporting Statement */}
+            <p className="text-lg sm:text-xl font-medium text-amber-800 leading-relaxed max-w-lg">
+              Turning visions into lasting structures.
+            </p>
+          </div>
+        </Container>
+      </Section>
+
       {/* Leadership & Team Preview */}
       <Section background="white" padding="default">
         <Container>
@@ -323,6 +381,9 @@ export const HomePage = () => {
           </Card>
         </Container>
       </Section>
+
+      {/* Customer Reviews / Testimonials Section */}
+      <TestimonialSlider />
 
       {/* Building Estimate Request CTA Banner */}
       <Section background="dark" padding="default">

@@ -1,18 +1,46 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { apiClient, uploadProjectMedia, deleteProjectMedia } from '../../services/api';
+import {
+  apiClient,
+  uploadProjectMedia,
+  deleteProjectMedia,
+  fetchAdminHomepageSlider,
+  selectHomepageMedia,
+  deselectHomepageMedia,
+  reorderHomepageSlider,
+} from '../../services/api';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
 import { Select } from '../../components/ui/Select';
 import { ConfirmModal } from '../../components/admin/ConfirmModal';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
-import { Plus, Edit, Trash2, Search, CheckCircle, XCircle, Upload, Camera, X, Link as LinkIcon } from 'lucide-react';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  CheckCircle,
+  XCircle,
+  Upload,
+  Camera,
+  X,
+  Link as LinkIcon,
+  ArrowUp,
+  ArrowDown,
+  Star,
+  Check,
+} from 'lucide-react';
 
 export const AdminProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Homepage Slider Admin State
+  const [homepageSliderItems, setHomepageSliderItems] = useState([]);
+  const [sliderLoading, setSliderLoading] = useState(false);
+  const [sliderMessage, setSliderMessage] = useState('');
 
   // Refs for file inputs
   const coverInputRef = useRef(null);
@@ -65,9 +93,69 @@ export const AdminProjectsPage = () => {
     }
   };
 
+  const loadHomepageSlider = async () => {
+    try {
+      setSliderLoading(true);
+      const res = await fetchAdminHomepageSlider();
+      if (res && res.success && Array.isArray(res.data)) {
+        setHomepageSliderItems(res.data);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch homepage slider state:', err);
+    } finally {
+      setSliderLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchProjects();
+    loadHomepageSlider();
   }, []);
+
+  const handleToggleHomepageSelect = async (projectId, mediaId, mediaType, isSelected) => {
+    setSliderMessage('');
+    try {
+      if (isSelected) {
+        const res = await deselectHomepageMedia(mediaId);
+        if (res && res.success) {
+          setHomepageSliderItems(res.data || []);
+        }
+      } else {
+        if (homepageSliderItems.length >= 6) {
+          setSliderMessage('Homepage slider already has 6 photos. Deselect a photo before selecting another.');
+          return;
+        }
+        const res = await selectHomepageMedia(projectId, mediaId, mediaType);
+        if (res && res.success) {
+          setHomepageSliderItems(res.data || []);
+        }
+      }
+    } catch (err) {
+      setSliderMessage(err.message || 'Failed to update homepage slider selection');
+    }
+  };
+
+  const handleMoveSliderItem = async (index, direction) => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= homepageSliderItems.length) return;
+
+    const updated = [...homepageSliderItems];
+    const [moved] = updated.splice(index, 1);
+    updated.splice(targetIndex, 0, moved);
+
+    setHomepageSliderItems(updated);
+
+    try {
+      const orderedMediaIds = updated.map((item) => item.mediaId);
+      const res = await reorderHomepageSlider(orderedMediaIds);
+      if (res && res.success) {
+        setHomepageSliderItems(res.data || []);
+      }
+    } catch (err) {
+      setSliderMessage(err.message || 'Failed to reorder homepage slider');
+      loadHomepageSlider();
+    }
+  };
 
   const resetForm = () => {
     setFormData({
@@ -100,7 +188,6 @@ export const AdminProjectsPage = () => {
     setIsEditing(true);
     setCurrentId(project._id);
 
-    // Normalize coverImage (can be string or object)
     let normCover = { url: '', publicId: '', caption: '' };
     if (typeof project.coverImage === 'string') {
       normCover.url = project.coverImage;
@@ -112,7 +199,6 @@ export const AdminProjectsPage = () => {
       };
     }
 
-    // Normalize galleryImages
     const normGallery = Array.isArray(project.galleryImages)
       ? project.galleryImages.map((img) => {
           if (typeof img === 'string') {
@@ -235,6 +321,7 @@ export const AdminProjectsPage = () => {
     if (isEditing && currentId && item._id) {
       try {
         await deleteProjectMedia(currentId, item._id);
+        loadHomepageSlider();
       } catch (err) {
         setFormError(err.message || 'Failed to delete media asset from backend');
         return;
@@ -271,6 +358,7 @@ export const AdminProjectsPage = () => {
       setIsModalOpen(false);
       resetForm();
       fetchProjects();
+      loadHomepageSlider();
     } catch (err) {
       setFormError(err.response?.data?.error?.message || err.message || 'Failed to save project');
     } finally {
@@ -286,6 +374,7 @@ export const AdminProjectsPage = () => {
       setDeleteModalOpen(false);
       setTargetDeleteId(null);
       fetchProjects();
+      loadHomepageSlider();
     } catch (err) {
       alert(err.response?.data?.error?.message || 'Failed to delete project');
     } finally {
@@ -336,6 +425,114 @@ export const AdminProjectsPage = () => {
         </Button>
       </div>
 
+      {/* Global Homepage Photo Slider Manager Banner */}
+      <div className="bg-slate-900 text-white rounded-lg p-5 shadow-sm border border-slate-800 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+              <h3 className="text-base font-bold text-white">Homepage Project Photo Slider</h3>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Select up to 6 published project photos to display in the homepage hero carousel.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                homepageSliderItems.length === 6
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                  : homepageSliderItems.length > 0
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  : 'bg-slate-800 text-slate-400 border-slate-700'
+              }`}
+            >
+              Homepage Slider: {homepageSliderItems.length} / 6 photos selected
+            </span>
+          </div>
+        </div>
+
+        {sliderMessage && (
+          <div className="p-3 bg-amber-950/70 border border-amber-700/60 text-amber-200 text-xs rounded font-medium flex items-center justify-between">
+            <span>⚠️ {sliderMessage}</span>
+            <button onClick={() => setSliderMessage('')} className="text-amber-400 hover:text-white">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {sliderLoading ? (
+          <div className="py-4 text-center">
+            <LoadingSpinner size="sm" />
+          </div>
+        ) : homepageSliderItems.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {homepageSliderItems.map((item, idx) => (
+              <div
+                key={item.mediaId || item._id || idx}
+                className="relative bg-slate-800 rounded-md overflow-hidden border border-slate-700 group flex flex-col justify-between"
+              >
+                <div className="relative w-full aspect-16/9 bg-slate-950">
+                  <img
+                    src={item.url}
+                    alt={item.caption || item.project?.title || 'Selected Slide'}
+                    className="w-full h-full object-cover"
+                  />
+                  <span className="absolute top-1 left-1 bg-amber-500 text-slate-950 font-black text-[10px] px-1.5 py-0.5 rounded shadow-sm">
+                    #{idx + 1}
+                  </span>
+                </div>
+
+                <div className="p-2 space-y-1">
+                  <div className="text-[11px] font-bold text-white truncate" title={item.project?.title}>
+                    {item.project?.title || 'Project'}
+                  </div>
+                  <div className="text-[10px] text-slate-400 truncate">
+                    {item.mediaType === 'cover' ? 'Hero Cover' : item.caption || 'Gallery Photo'}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-700/60">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={() => handleMoveSliderItem(idx, 'up')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-30 hover:bg-slate-700 rounded cursor-pointer"
+                        title="Move Up"
+                      >
+                        <ArrowUp className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === homepageSliderItems.length - 1}
+                        onClick={() => handleMoveSliderItem(idx, 'down')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-30 hover:bg-slate-700 rounded cursor-pointer"
+                        title="Move Down"
+                      >
+                        <ArrowDown className="w-3 h-3" />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleHomepageSelect(item.project?._id, item.mediaId, item.mediaType, true)}
+                      className="text-[10px] font-semibold text-red-400 hover:text-red-300 hover:underline cursor-pointer"
+                    >
+                      Deselect
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-slate-400 italic py-2">
+            No photos selected for the homepage slider yet. Open any published project record below and click "Show on Homepage" on its cover or gallery photos.
+          </p>
+        )}
+      </div>
+
       {/* Filter / Search Bar */}
       <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs flex items-center gap-3">
         <div className="relative flex-1">
@@ -350,7 +547,7 @@ export const AdminProjectsPage = () => {
         </div>
       </div>
 
-      {/* Main Table */}
+      {/* Main Projects Table */}
       {loading ? (
         <div className="py-12 text-center">
           <LoadingSpinner size="lg" />
@@ -417,7 +614,7 @@ export const AdminProjectsPage = () => {
                       </td>
                       <td className="p-3 text-right space-x-2">
                         <Button variant="outline" size="sm" onClick={() => handleOpenEditModal(project)}>
-                          <Edit className="w-3.5 h-3.5" />
+                          <Edit className="w-3.5 h-3.5" /> Manage Photos
                         </Button>
                         <Button
                           variant="danger"
@@ -548,11 +745,50 @@ export const AdminProjectsPage = () => {
                 rows={3}
               />
 
-              {/* Cover Image Upload Section */}
+              {/* Cover Image Upload & Homepage Selection */}
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
-                <label className="block text-xs font-bold text-slate-800">
-                  Hero Cover Image
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-800">
+                    Hero Cover Image
+                  </label>
+                  {isEditing && formData.coverImage?.url && (
+                    (() => {
+                      const isSelected = homepageSliderItems.some(
+                        (item) => item.project?._id === currentId && item.mediaType === 'cover'
+                      );
+                      const selectedItem = homepageSliderItems.find(
+                        (item) => item.project?._id === currentId && item.mediaType === 'cover'
+                      );
+
+                      return (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleToggleHomepageSelect(currentId, 'cover', 'cover', isSelected)
+                          }
+                          disabled={!formData.isPublished}
+                          className={`text-xs font-bold px-2.5 py-1 rounded transition-colors cursor-pointer flex items-center gap-1.5 ${
+                            isSelected
+                              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                              : !formData.isPublished
+                              ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                              : 'bg-amber-600 text-white hover:bg-amber-700'
+                          }`}
+                          title={
+                            !formData.isPublished
+                              ? 'Publish project first to select for homepage'
+                              : isSelected
+                              ? 'Click to remove from homepage slider'
+                              : 'Click to feature on homepage slider'
+                          }
+                        >
+                          <Star className="w-3.5 h-3.5 fill-current" />
+                          {isSelected ? `✓ On Homepage (#${selectedItem ? selectedItem.displayOrder + 1 : 1})` : '+ Show on Homepage'}
+                        </button>
+                      );
+                    })()
+                  )}
+                </div>
 
                 {formData.coverImage?.url ? (
                   <div className="relative w-full h-40 rounded-md overflow-hidden border border-slate-300 bg-slate-100 group">
@@ -669,7 +905,7 @@ export const AdminProjectsPage = () => {
                     type="button"
                     onClick={handleAddGalleryUrl}
                     disabled={!galleryUrlInput.trim()}
-                    className="bg-slate-800 hover:bg-slate-900 disabled:opacity-50 text-white text-xs font-semibold px-3 py-1.5 rounded shadow-xs flex items-center gap-1"
+                    className="bg-slate-800 hover:bg-slate-900 disabled:opacity-50 text-white text-xs font-semibold px-3 py-1.5 rounded shadow-xs flex items-center gap-1 cursor-pointer"
                   >
                     <LinkIcon className="w-3 h-3" /> Add URL
                   </button>
@@ -678,33 +914,75 @@ export const AdminProjectsPage = () => {
                 {/* Gallery Thumbnails List */}
                 {formData.galleryImages.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2">
-                    {formData.galleryImages.map((img, idx) => (
-                      <div key={idx} className="relative bg-white border border-slate-200 rounded-md overflow-hidden shadow-xs group">
-                        <div className="w-full h-24 bg-slate-100">
-                          <img
-                            src={img.url}
-                            alt={img.caption || `Gallery ${idx + 1}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.target.src = 'https://via.placeholder.com/150?text=Invalid+Image+URL';
-                            }}
-                          />
+                    {formData.galleryImages.map((img, idx) => {
+                      const mediaId = img._id || `temp_${idx}`;
+                      const isSelected = homepageSliderItems.some(
+                        (item) => item.mediaId === mediaId || (item.project?._id === currentId && item.mediaId === img._id)
+                      );
+                      const selectedItem = homepageSliderItems.find(
+                        (item) => item.mediaId === mediaId || (item.project?._id === currentId && item.mediaId === img._id)
+                      );
+
+                      return (
+                        <div key={idx} className="relative bg-white border border-slate-200 rounded-md overflow-hidden shadow-xs group flex flex-col justify-between">
+                          <div className="w-full h-24 bg-slate-100 relative">
+                            <img
+                              src={img.url}
+                              alt={img.caption || `Gallery ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.src = 'https://via.placeholder.com/150?text=Invalid+Image+URL';
+                              }}
+                            />
+                            {isSelected && (
+                              <span className="absolute top-1 left-1 bg-emerald-600 text-white font-bold text-[9px] px-1.5 py-0.5 rounded shadow-sm">
+                                On Homepage #{selectedItem ? selectedItem.displayOrder + 1 : ''}
+                              </span>
+                            )}
+                          </div>
+                          <div className="p-1.5 text-[10px] flex items-center justify-between bg-slate-50 border-t border-slate-100">
+                            <span className="bg-amber-50 text-amber-800 font-semibold px-1.5 py-0.5 rounded border border-amber-200 truncate max-w-[90px]">
+                              {img.category || 'GENERAL'}
+                            </span>
+
+                            {isEditing && img._id && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleToggleHomepageSelect(currentId, img._id, 'gallery', isSelected)
+                                }
+                                disabled={!formData.isPublished}
+                                className={`text-[10px] font-bold px-1.5 py-0.5 rounded cursor-pointer transition-colors ${
+                                  isSelected
+                                    ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                                    : !formData.isPublished
+                                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                                    : 'bg-amber-600 text-white hover:bg-amber-700'
+                                }`}
+                                title={
+                                  !formData.isPublished
+                                    ? 'Publish project first'
+                                    : isSelected
+                                    ? 'Remove from homepage slider'
+                                    : 'Select for homepage slider'
+                                }
+                              >
+                                {isSelected ? 'Selected' : '+ Homepage'}
+                              </button>
+                            )}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveGalleryImage(idx, img)}
+                            className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-80 hover:opacity-100 shadow-md cursor-pointer"
+                            title="Remove photo"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
                         </div>
-                        <div className="p-1.5 text-[10px]">
-                          <span className="inline-block bg-amber-50 text-amber-800 font-semibold px-1.5 py-0.5 rounded border border-amber-200 truncate max-w-full">
-                            {img.category || 'GENERAL'}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveGalleryImage(idx, img)}
-                          className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-80 hover:opacity-100 shadow-md"
-                          title="Remove photo"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-xs text-slate-500 italic text-center py-4">

@@ -27,7 +27,7 @@ const CANONICAL_SERVICES = [
 
 // Approved 10 Team Roster Entries
 const TEAM_ROSTER = [
-  { memberId: "jayakumar-ramachandran", name: "Jayakumar Ramachandran (Kochukuttan)", role: "Proprietor / Civil Engineer / Managing Director / Director", location: "Koodal, Pathanamthitta, Kerala", status: "CONFIRMED_FROM_PROVIDED_MATERIAL", displayOrder: 1 },
+  { memberId: "jayakumar-ramachandran", name: "Jayakumar Ramachandran (Kochukuttan)", role: "Proprietor / Civil Engineer / Managing Director / Director", location: "Koodal, Pathanamthitta, Kerala", avatar: "/src/assets/jaikumar-ramachandran.jpg", status: "CONFIRMED_FROM_PROVIDED_MATERIAL", displayOrder: 1 },
   { memberId: "sarath-jayakumar", name: "Sarath Jayakumar (Ph.D Scholar)", role: "Landscape Designer / Project Manager", location: "Koodal, Pathanamthitta, Kerala", status: "CONFIRMED_FROM_PROVIDED_MATERIAL", displayOrder: 2 },
   { memberId: "indrasena-reddy", name: "Indrasena Reddy", role: "Brand / Media Manager", location: "Andhra Pradesh", status: "CONFIRMED_FROM_PROVIDED_MATERIAL", displayOrder: 3 },
   { memberId: "anoop", name: "Anoop", role: "Brand / Media Manager", location: "Kerala", status: "CONFIRMED_FROM_PROVIDED_MATERIAL", displayOrder: 4 },

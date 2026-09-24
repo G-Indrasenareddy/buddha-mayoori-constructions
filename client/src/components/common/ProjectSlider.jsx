@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchProjects } from '../../services/api';
+import { fetchHomepageSlider } from '../../services/api';
 import { Container } from '../ui/Container';
 import { Section } from '../ui/Section';
 import { SectionHeading } from '../ui/SectionHeading';
@@ -20,56 +20,16 @@ export const ProjectSlider = () => {
   useEffect(() => {
     let isMounted = true;
 
-    const loadProjectMedia = async () => {
+    const loadHomepageSliderMedia = async () => {
       try {
         setLoading(true);
         setHasApiError(false);
-        const res = await fetchProjects();
+        const res = await fetchHomepageSlider();
 
         if (!isMounted) return;
 
         if (res && res.success && Array.isArray(res.data)) {
-          const extractedMediaMap = new Map();
-
-          res.data.forEach((project) => {
-            const items = [];
-            if (project.coverImage && typeof project.coverImage.url === 'string' && project.coverImage.url.trim() !== '') {
-              items.push({
-                url: project.coverImage.url,
-                publicId: project.coverImage.publicId || '',
-                caption: '',
-              });
-            }
-
-            if (Array.isArray(project.galleryImages)) {
-              project.galleryImages.forEach((img) => {
-                if (img && typeof img.url === 'string' && img.url.trim() !== '') {
-                  items.push({
-                    url: img.url,
-                    publicId: img.publicId || '',
-                    caption: img.caption || '',
-                  });
-                }
-              });
-            }
-
-            items.forEach((item) => {
-              const key = item.publicId || item.url;
-              if (key && !extractedMediaMap.has(key)) {
-                extractedMediaMap.set(key, {
-                  id: key,
-                  url: item.url,
-                  caption: item.caption || '',
-                  projectTitle: project.title || '',
-                  projectCategory: project.category || '',
-                  projectLocation: project.location || '',
-                  projectSlug: project.slug || '',
-                });
-              }
-            });
-          });
-
-          setMediaList(Array.from(extractedMediaMap.values()));
+          setMediaList(res.data);
         } else {
           setMediaList([]);
         }
@@ -86,7 +46,7 @@ export const ProjectSlider = () => {
       }
     };
 
-    loadProjectMedia();
+    loadHomepageSliderMedia();
 
     return () => {
       isMounted = false;
@@ -151,8 +111,6 @@ export const ProjectSlider = () => {
     touchEndX.current = 0;
   };
 
-  // Differentiate State Renderings
-
   // 1. Loading State (Skeletal Placeholder)
   if (loading) {
     return (
@@ -164,7 +122,7 @@ export const ProjectSlider = () => {
     );
   }
 
-  // 2. Zero Published Projects OR API/Network Error (Unmount Cleanly without developer error boxes)
+  // 2. Zero Published Selected Photos OR API/Network Error -> Return null cleanly
   if (hasApiError || mediaList.length === 0) {
     return null;
   }

@@ -1,4 +1,5 @@
 import { Project } from '../models/Project.js';
+import { HomepageSlider } from '../models/HomepageSlider.js';
 import { AppError } from '../utils/AppError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import cloudinary from '../config/cloudinary.js';
@@ -25,6 +26,15 @@ const processMediaUpload = async (file, folder = 'bmc_projects') => {
     );
     uploadStream.end(file.buffer);
   });
+};
+
+// Helper to get or initialize the singleton HomepageSlider document
+const getOrCreateSliderDoc = async () => {
+  let slider = await HomepageSlider.findOne({ key: 'GLOBAL_HOMEPAGE_SLIDER' });
+  if (!slider) {
+    slider = await HomepageSlider.create({ key: 'GLOBAL_HOMEPAGE_SLIDER', items: [] });
+  }
+  return slider;
 };
 
 export const getAdminProjects = asyncHandler(async (req, res) => {
@@ -75,8 +85,8 @@ export const deleteProjectMedia = asyncHandler(async (req, res, next) => {
   let isCoverMedia = false;
 
   if (!targetMedia) {
-    // Check if mediaId matches coverImage ID
-    if (project.coverImage && project.coverImage._id && project.coverImage._id.toString() === mediaId) {
+    // Check if mediaId matches coverImage ID or 'cover'
+    if (mediaId === 'cover' || (project.coverImage && project.coverImage._id && project.coverImage._id.toString() === mediaId)) {
       targetMedia = project.coverImage;
       isCoverMedia = true;
     }
@@ -97,7 +107,20 @@ export const deleteProjectMedia = asyncHandler(async (req, res, next) => {
 
   await project.save();
 
-  // Step 2: Delete from Cloudinary Second (Best effort)
+  // Step 2: Remove from HomepageSlider if selected
+  const slider = await HomepageSlider.findOne({ key: 'GLOBAL_HOMEPAGE_SLIDER' });
+  if (slider) {
+    const initialLen = slider.items.length;
+    slider.items = slider.items.filter((item) => item.mediaId !== mediaId);
+    if (slider.items.length !== initialLen) {
+      slider.items.forEach((item, idx) => {
+        item.displayOrder = idx;
+      });
+      await slider.save();
+    }
+  }
+
+  // Step 3: Delete from Cloudinary Second (Best effort)
   if (verifiedPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
     try {
       await cloudinary.uploader.destroy(verifiedPublicId);
@@ -218,6 +241,19 @@ export const deleteProject = asyncHandler(async (req, res, next) => {
   // Delete project from Mongoose first
   await project.deleteOne();
 
+  // Cascade cleanup from HomepageSlider
+  const slider = await HomepageSlider.findOne({ key: 'GLOBAL_HOMEPAGE_SLIDER' });
+  if (slider) {
+    const initialLen = slider.items.length;
+    slider.items = slider.items.filter((item) => item.project.toString() !== req.params.id);
+    if (slider.items.length !== initialLen) {
+      slider.items.forEach((item, idx) => {
+        item.displayOrder = idx;
+      });
+      await slider.save();
+    }
+  }
+
   // Destroy Cloudinary assets second (best effort)
   if (publicIdsToDestroy.length > 0 && process.env.CLOUDINARY_CLOUD_NAME) {
     Promise.all(publicIdsToDestroy.map((pid) => cloudinary.uploader.destroy(pid))).catch((err) =>
@@ -229,4 +265,189 @@ export const deleteProject = asyncHandler(async (req, res, next) => {
     success: true,
     message: 'Project and associated media deleted successfully',
   });
+});
+
+// ==========================================
+// HOMEPAGE SLIDER ADMIN CONTROLLERS
+// ==========================================
+
+export const getAdminHomepageSlider = asyncHandler(async (req, res) => {
+  const slider = await getOrCreateSliderDoc();
+  await slider.populate({
+    path: 'items.project',
+    select: 'title category location slug isPublished coverImage galleryImages',
+  });
+
+  const resolvedItems = [];
+  slider.items.forEach((item) => {
+    const project = item.project;
+    if (!project) return;
+
+    let targetMedia = null;
+    if (item.mediaType === 'cover' && project.coverImage && project.coverImage.url) {
+      targetMedia = {
+        url: project.coverImage.url,
+        publicId: project.coverImage.publicId || '',
+        caption: '',
+      };
+    } else if (item.mediaType === 'gallery' && Array.isArray(project.galleryImages)) {
+      const gImg = project.galleryImages.find((g) => g._id.toString() === item.mediaId);
+      if (gImg) {
+        targetMedia = {
+          url: gImg.url,
+          publicId: gImg.publicId || '',
+          caption: gImg.caption || '',
+        };
+      }
+    }
+
+    if (targetMedia && targetMedia.url) {
+      resolvedItems.push({
+        _id: item._id,
+        mediaId: item.mediaId,
+        mediaType: item.mediaType,
+        displayOrder: item.displayOrder,
+        url: targetMedia.url,
+        publicId: targetMedia.publicId,
+        caption: targetMedia.caption,
+        project: {
+          _id: project._id,
+          title: project.title,
+          category: project.category,
+          location: project.location,
+          slug: project.slug,
+          isPublished: project.isPublished,
+        },
+      });
+    }
+  });
+
+  resolvedItems.sort((a, b) => a.displayOrder - b.displayOrder);
+
+  res.status(200).json({
+    success: true,
+    count: resolvedItems.length,
+    maxLimit: 6,
+    data: resolvedItems,
+  });
+});
+
+export const selectHomepageMedia = asyncHandler(async (req, res, next) => {
+  const { projectId, mediaId, mediaType } = req.body;
+
+  if (!projectId || !mediaId || !mediaType) {
+    return next(new AppError('projectId, mediaId, and mediaType are required.', 400));
+  }
+
+  if (!['cover', 'gallery'].includes(mediaType)) {
+    return next(new AppError('mediaType must be cover or gallery.', 400));
+  }
+
+  const project = await Project.findById(projectId);
+  if (!project) {
+    return next(new AppError(`Project not found with id: ${projectId}`, 404));
+  }
+
+  if (!project.isPublished) {
+    return next(new AppError('Only media from published projects can be selected for the public homepage slider.', 400));
+  }
+
+  let validMedia = false;
+  if (mediaType === 'cover') {
+    if (project.coverImage && project.coverImage.url && project.coverImage.url.trim() !== '') {
+      validMedia = true;
+    }
+  } else if (mediaType === 'gallery') {
+    const gImg = project.galleryImages.id(mediaId);
+    if (gImg && gImg.url && gImg.url.trim() !== '') {
+      validMedia = true;
+    }
+  }
+
+  if (!validMedia) {
+    return next(new AppError('Selected media item does not exist in this project record.', 404));
+  }
+
+  const slider = await getOrCreateSliderDoc();
+
+  // Check duplicate
+  const existingIndex = slider.items.findIndex(
+    (item) => item.project.toString() === projectId && item.mediaId === mediaId
+  );
+  if (existingIndex !== -1) {
+    return next(new AppError('This photo is already selected for the homepage slider.', 400));
+  }
+
+  // GLOBAL LIMIT OF 6 ENFORCEMENT
+  if (slider.items.length >= 6) {
+    return next(
+      new AppError('Homepage slider already has 6 photos selected. Deselect a photo before selecting another.', 400)
+    );
+  }
+
+  slider.items.push({
+    project: projectId,
+    mediaId,
+    mediaType,
+    displayOrder: slider.items.length,
+  });
+
+  await slider.save();
+
+  return getAdminHomepageSlider(req, res, next);
+});
+
+export const deselectHomepageMedia = asyncHandler(async (req, res, next) => {
+  const { mediaId } = req.params;
+
+  const slider = await getOrCreateSliderDoc();
+  slider.items = slider.items.filter((item) => item.mediaId !== mediaId && item._id.toString() !== mediaId);
+
+  slider.items.forEach((item, idx) => {
+    item.displayOrder = idx;
+  });
+
+  await slider.save();
+
+  return getAdminHomepageSlider(req, res, next);
+});
+
+export const reorderHomepageSlider = asyncHandler(async (req, res, next) => {
+  const { orderedMediaIds } = req.body;
+
+  if (!Array.isArray(orderedMediaIds)) {
+    return next(new AppError('orderedMediaIds must be an array of media IDs.', 400));
+  }
+
+  const slider = await getOrCreateSliderDoc();
+
+  const itemMap = new Map();
+  slider.items.forEach((item) => {
+    itemMap.set(item.mediaId, item);
+    itemMap.set(item._id.toString(), item);
+  });
+
+  const newItems = [];
+  const processedKeys = new Set();
+
+  orderedMediaIds.forEach((id, idx) => {
+    const found = itemMap.get(id);
+    if (found && !processedKeys.has(found.mediaId)) {
+      found.displayOrder = idx;
+      newItems.push(found);
+      processedKeys.add(found.mediaId);
+    }
+  });
+
+  slider.items.forEach((item) => {
+    if (!processedKeys.has(item.mediaId)) {
+      item.displayOrder = newItems.length;
+      newItems.push(item);
+    }
+  });
+
+  slider.items = newItems;
+  await slider.save();
+
+  return getAdminHomepageSlider(req, res, next);
 });

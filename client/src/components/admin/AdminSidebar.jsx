@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FolderKanban, Wrench, Users, MessageSquare, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Wrench, Users, MessageSquare, ExternalLink, Star } from 'lucide-react';
 import logoImg from '../../assets/buddha-mayoori-logo.jpg';
 
 export const AdminSidebar = () => {
@@ -8,6 +8,7 @@ export const AdminSidebar = () => {
     { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
     { to: '/admin/enquiries', label: 'Enquiries & Quotes', icon: MessageSquare },
     { to: '/admin/projects', label: 'Projects', icon: FolderKanban },
+    { to: '/admin/reviews', label: 'Customer Reviews', icon: Star },
     { to: '/admin/services', label: 'Canonical Services', icon: Wrench },
     { to: '/admin/team', label: 'Team Roster', icon: Users },
   ];

@@ -23,6 +23,7 @@ import { AdminProjectsPage } from './pages/admin/AdminProjectsPage';
 import { AdminServicesPage } from './pages/admin/AdminServicesPage';
 import { AdminTeamPage } from './pages/admin/AdminTeamPage';
 import { AdminEnquiriesPage } from './pages/admin/AdminEnquiriesPage';
+import { AdminReviewsPage } from './pages/admin/AdminReviewsPage';
 
 export default function App() {
   return (
@@ -56,6 +57,7 @@ export default function App() {
           >
             <Route index element={<AdminDashboardPage />} />
             <Route path="projects" element={<AdminProjectsPage />} />
+            <Route path="reviews" element={<AdminReviewsPage />} />
             <Route path="services" element={<AdminServicesPage />} />
             <Route path="team" element={<AdminTeamPage />} />
             <Route path="enquiries" element={<AdminEnquiriesPage />} />
