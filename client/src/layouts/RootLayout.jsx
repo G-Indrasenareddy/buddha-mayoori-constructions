@@ -4,9 +4,10 @@ import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { WhatsAppCTA } from '../components/layout/WhatsAppCTA';
 import { ScrollToTop } from '../components/common/ScrollToTop';
+import { BuildingEstimationCalculator } from '../components/common/BuildingEstimationCalculator';
 
 /**
- * Root Layout incorporating Navbar, Footer, WhatsApp floating CTA, and ScrollToTop
+ * Root Layout incorporating Navbar, Footer, Floating Estimation Calculator, WhatsApp floating CTA, and ScrollToTop
  */
 export const RootLayout = () => {
   return (
@@ -17,7 +18,9 @@ export const RootLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <BuildingEstimationCalculator />
       <WhatsAppCTA />
     </div>
   );
 };
+

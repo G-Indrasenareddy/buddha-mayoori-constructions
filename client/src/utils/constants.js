@@ -8,6 +8,39 @@ export const COMPANY_INFO = {
   tagline: "Building Excellence Since 1990",
 };
 
+// Canonical Construction Cost Estimation Package Rates (Single Source of Truth)
+export const ESTIMATION_PACKAGES = [
+  {
+    id: 'standard',
+    name: 'Standard',
+    rate: 2100,
+    badge: 'Popular',
+    desc: 'Essential structural work & quality standard materials.',
+  },
+  {
+    id: 'classic',
+    name: 'Classic',
+    rate: 2250,
+    badge: 'Recommended',
+    desc: 'Enhanced finishes & premium structural engineering.',
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    rate: 2550,
+    badge: 'Executive',
+    desc: 'Superior materials, custom elevations & luxury fittings.',
+  },
+  {
+    id: 'royale',
+    name: 'Royale',
+    rate: 2800,
+    badge: 'Luxury',
+    desc: 'Top-tier luxury construction & high-end architecture.',
+  },
+];
+
+
 // Business-provided claims
 export const BUSINESS_CLAIMS = [
   {

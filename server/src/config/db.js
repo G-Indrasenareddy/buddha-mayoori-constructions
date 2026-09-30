@@ -17,7 +17,7 @@ export const connectDB = async () => {
     });
 
     logger.info(`MongoDB Connected: ${conn.connection.host} / ${conn.connection.name}`);
-  } catch (error) {
+  }  catch (error) {
     logger.error(`MongoDB Connection Error: ${error.message}`);
     // In production/dev, exit on startup failure if DB is strictly required
     if (process.env.STRICT_DB_REQUIRED === 'true') {
